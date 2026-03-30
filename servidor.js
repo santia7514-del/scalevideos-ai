@@ -10,6 +10,7 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// 🔥 GERA PROMPT PARA VEO3
 function gerarPromptVeo3(cenas) {
   return `
 Create a cinematic short video:
@@ -24,19 +25,9 @@ Voice over: "${c.narracao}"
 Style:
 Realistic, TikTok style, handheld camera.
 `;
-
-${cenas.map((c, i) => `
-Scene ${i + 1}:
-${c.cena}
-Text overlay: "${c.texto}"
-Voice over: "${c.narracao}"
-`).join('\n')}
-
-Style:
-Realistic, TikTok style, handheld camera.
-`;
 }
 
+// 🔥 ROTA PRINCIPAL
 app.post("/gerar", async (req, res) => {
   const { produto } = req.body;
 
@@ -45,54 +36,37 @@ app.post("/gerar", async (req, res) => {
       model: "gpt-4.1",
       messages: [
         {
+          role: "system",
+          content: "Você cria roteiros de vídeos virais para TikTok."
+        },
+        {
           role: "user",
-          content: `
-Crie um roteiro de vídeo para o produto: ${produto}
-
-Responda SOMENTE em JSON válido:
-{
-  "roteiro": "texto geral",
-  "cenas": [
-    {"cena": 1, "texto": "", "narracao": ""},
-    {"cena": 2, "texto": "", "narracao": ""},
-    {"cena": 3, "texto": "", "narracao": ""}
-  ],
-  "legenda": ""
-}
-`
+          content: `Crie 3 cenas para vender: ${produto}. Responda em JSON com: cena, texto e narracao.`
         }
       ]
     });
 
     const texto = response.choices[0].message.content;
+    const json = JSON.parse(texto);
 
-    let json;
-
-    try {
-      json = JSON.parse(texto);
-    } catch (e) {
-      return res.status(500).json({
-        erro: "Erro ao converter JSON",
-        resposta: texto
-      });
-    }
-
-    const promptVeo3 = gerarPromptVeo3(json.cenas);
+    const promptVeo3 = gerarPromptVeo3(json);
 
     res.json({
-      ...json,
+      cenas: json,
       prompt_veo3: promptVeo3
     });
 
   } catch (e) {
+    console.error(e);
     res.status(500).json({ erro: "Erro na IA" });
   }
 });
 
+// 🔥 TESTE
 app.get("/", (req, res) => {
   res.send("Servidor rodando");
 });
 
 app.listen(3000, () => {
-  console.log("Servidor rodando");
+  console.log("Servidor rodando na porta 3000");
 });
