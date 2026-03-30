@@ -24,6 +24,17 @@ Voice over: "${c.narracao}"
 Style:
 Realistic, TikTok style, handheld camera.
 `;
+
+${cenas.map((c, i) => `
+Scene ${i + 1}:
+${c.cena}
+Text overlay: "${c.texto}"
+Voice over: "${c.narracao}"
+`).join('\n')}
+
+Style:
+Realistic, TikTok style, handheld camera.
+`;
 }
 
 app.post("/gerar", async (req, res) => {
