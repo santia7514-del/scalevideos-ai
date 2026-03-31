@@ -32,7 +32,7 @@ Estrutura:
 Texto simples, direto, envolvente e focado em conversão.`
     });
 
-    const texto = resposta.output[0].content[0].text;
+   const texto = resposta.output_text;
 
     res.json({
       success: true,
