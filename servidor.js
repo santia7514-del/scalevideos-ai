@@ -25,14 +25,17 @@ app.post("/gerar", async (req, res) => {
       return res.status(400).json({ erro: "Tema é obrigatório" });
     }
 
-    const resposta = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: `Crie um roteiro viral de vídeo curto para TikTok sobre: ${tema}.
+    const resposta = await client.responses.create({
+  model: "gpt-4.1-mini",
+  input: `Crie um roteiro viral de vídeo curto para TikTok sobre: ${tema}.
+
 Estrutura:
 - Gancho forte
+- Desenvolvimento
+- CTA final
+
+Texto simples, direto e altamente envolvente.`
+});
 - Desenvolvimento
 - CTA final
 Texto simples, direto e altamente envolvente.`
